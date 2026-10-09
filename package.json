@@ -28,7 +28,9 @@
     "google-auth-library": "^11.1.0",
     "http-status": "^2.1.0",
     "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^10.0.16",
     "pg": "^8.22.0",
+    "redis": "^6.3.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {

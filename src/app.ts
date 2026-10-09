@@ -12,6 +12,8 @@ import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import { AuthRoutes } from "./app/module/auth/auth.route";
 import z from "zod";
+import { redisClient } from "./app/lib/redis";
+import crypto from "crypto";
 
 const app: Application = express();
 
@@ -31,32 +33,56 @@ app.use(cookieParser());
 
 app.use("/api/v1/auth", AuthRoutes);
 
-app.post("/zod", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const UserZodSchema = z.object({
-      name: z.string(),
-      email : z.email(),
-      age: z.number().optional(),
-      isVerified: z.boolean().optional(),
-      books: z.array(z.string()).optional(),
-    });
+app.get(
+  "/forgot-password",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const otp = crypto.randomInt(100000, 1000000);
+      // await redisClient.set("forgot-password-otp:patient1@gmail.com", "123456", {
+      //   expiration: {
+      //     type: "EX",
+      //     value: 2 * 60,
+      //   },
+      // });
 
-    const payload = req.body;
+      res.status(httpStatus.OK).json({
+        success: true,
+        message: "Welcome to MediFlow System Backend",
+        data: null,
+      });
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  },
+);
 
-    const result = UserZodSchema.parse(payload);
+// app.post("/zod", async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const UserZodSchema = z.object({
+//       name: z.string(),
+//       email : z.email(),
+//       age: z.number().optional(),
+//       isVerified: z.boolean().optional(),
+//       books: z.array(z.string()).optional(),
+//     });
 
-    console.log(result);
+//     const payload = req.body;
 
-    res.status(httpStatus.OK).json({
-      success: true,
-      message: "Welcome to MediFlow System Backend",
-      data: result,
-    });
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-});
+//     const result = UserZodSchema.parse(payload);
+
+//     console.log(result);
+
+//     res.status(httpStatus.OK).json({
+//       success: true,
+//       message: "Welcome to MediFlow System Backend",
+//       data: result,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     next(error);
+//   }
+// });
 
 // Basic route
 app.get("/", async (req: Request, res: Response) => {

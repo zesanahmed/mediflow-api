@@ -1,10 +1,10 @@
-import z, { string } from "zod";
+import z from "zod";
 
 const PatientRegistrationZodSchema = z.object({
   name: z
     .string("Not a string")
     .min(3, "Name atleat 3 characters long")
-    .max(10),
+    .max(50),
   email: z.email("Not email!!!"),
   password: z
     .string()
@@ -18,10 +18,11 @@ const PatientRegistrationZodSchema = z.object({
     ),
   patient: z
     .object({
-      contactNumber: string().optional(),
+      contactNumber: z.string().optional(),
     })
     .optional(),
 });
+
 const LoginZodSchema = z.object({
   email: z.email("Not email!!!"),
   password: z
@@ -36,7 +37,27 @@ const LoginZodSchema = z.object({
     ),
 });
 
+const ForgotPasswordZodSchema = z.object({
+  email: z.email("Not email!!!"),
+});
+const ResetPaaswordZodSchema = z.object({
+  email: z.email("Not email!!!"),
+  newPassword: z
+    .string()
+    .min(8, "Password must minimum 8 characters long")
+    .regex(/[A-Z]/, "Password must contain atleast one Uppercase letter")
+    .regex(/[a-z]/, "Password must contain atleast one Lowercase letter")
+    .regex(/[0-9]/, "Password must contain atleast one Number")
+    .regex(
+      /[^A-Za-z0-9]/,
+      "Password must contain atleast one speacial character",
+    ),
+  otp: z.string().length(6),
+});
+
 export const UserValidation = {
   PatientRegistrationZodSchema,
   LoginZodSchema,
+  ForgotPasswordZodSchema,
+  ResetPaaswordZodSchema,
 };
